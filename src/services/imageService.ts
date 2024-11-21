@@ -46,4 +46,19 @@ export const generateImages = async (
 export const checkPredictionStatus = async (predictionId: string): Promise<any> => {
   const response = await api.get(`/${predictionId}`);
   return response.data;
+};
+
+export const handleWebhookResponse = (webhookData: any): GeneratedImage[] => {
+  if (webhookData.status !== 'succeeded' || !webhookData.output) {
+    throw new Error('Invalid webhook data');
+  }
+
+  return webhookData.output.map((imageUrl: string, index: number) => ({
+    id: `${webhookData.id}_${index}`,
+    url: imageUrl,
+    prompt: webhookData.input.prompt,
+    model: webhookData.version,
+    createdAt: new Date(webhookData.completed_at),
+    status: 'completed'
+  }));
 }; 
