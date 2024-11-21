@@ -3,9 +3,9 @@ import { PromptConfig, GeneratedImage, AIModel } from '../types/types';
 import { API_CONFIG } from '../config/api.config';
 
 const api = axios.create({
-  baseURL: API_CONFIG.FLUX_PRO_ENDPOINT,
+  baseURL: API_CONFIG.REPLICATE_ENDPOINT,
   headers: {
-    'Authorization': `Bearer ${API_CONFIG.FLUX_PRO_API_KEY}`,
+    'Authorization': `Token ${API_CONFIG.REPLICATE_API_KEY}`,
     'Content-Type': 'application/json',
   }
 });
@@ -15,24 +15,26 @@ export const generateImages = async (
   selectedModel: AIModel
 ): Promise<GeneratedImage[]> => {
   try {
-    const response = await api.post('/generate', {
-      prompt: config.mainPrompt,
-      num_images: config.variations,
-      model: selectedModel.id,
-      scene: config.scene,
-      objects: config.objects,
-      environment: config.environment,
-      activities: config.activities,
+    const response = await api.post('', {
+      version: selectedModel.id,
+      input: {
+        prompt: config.mainPrompt,
+        num_outputs: config.variations,
+        webhook: API_CONFIG.MAKE_WEBHOOK_URL,
+        webhook_events_filter: ["completed"]
+      },
     });
 
-    return response.data.images.map((img: any) => ({
-      id: img.id,
-      url: img.url,
+    // Return pending images with prediction ID
+    return [{
+      id: response.data.id,
+      url: '', // Will be populated via webhook
       prompt: config.mainPrompt,
       model: selectedModel.name,
       createdAt: new Date(),
       rating: null,
-    }));
+      status: 'pending'
+    }];
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || 'Failed to generate images');
@@ -41,6 +43,7 @@ export const generateImages = async (
   }
 };
 
-export const rateImage = async (imageId: string, rating: number): Promise<void> => {
-  await api.post(`/images/${imageId}/rate`, { rating });
+export const checkPredictionStatus = async (predictionId: string): Promise<any> => {
+  const response = await api.get(`/${predictionId}`);
+  return response.data;
 }; 
