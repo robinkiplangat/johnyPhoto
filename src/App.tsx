@@ -11,7 +11,6 @@ function App() {
     selectedModel,
     setSelectedModel,
     generateImagesFromPrompt,
-    handleRateImage,
   } = useImageGeneration();
 
   return (
@@ -19,7 +18,7 @@ function App() {
       <div className="relative py-3 sm:max-w-3xl sm:mx-auto">
         <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
           <div className="max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold mb-8">AI Image Generator</h1>
+            <h1 className="text-2xl font-bold mb-8">Johny Wa Ma-Picha</h1>
 
             <ModelSelector
               selectedModel={selectedModel}
