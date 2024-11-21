@@ -1,6 +1,5 @@
 import { ImagePromptForm } from './components/ImageGeneration/ImagePromptForm';
 import { ModelSelector } from './components/ImageGeneration/ModelSelector';
-import { ImageRating } from './components/ImageGeneration/ImageRating';
 import { useImageGeneration } from './hooks/useImageGeneration';
 
 function App() {
@@ -14,55 +13,37 @@ function App() {
   } = useImageGeneration();
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-3xl sm:mx-auto">
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <div className="max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold mb-8">Johny Wa Ma-Picha</h1>
-
-            <ModelSelector
-              selectedModel={selectedModel}
-              onModelSelect={setSelectedModel}
-            />
-
-            <div className="mt-8">
-              <ImagePromptForm 
-                onSubmit={generateImagesFromPrompt}
-                isLoading={isLoading}
+    <div className="container mx-auto px-4 py-8">
+      <ModelSelector
+        selectedModel={selectedModel}
+        onModelSelect={setSelectedModel}
+      />
+      <ImagePromptForm
+        onSubmit={generateImagesFromPrompt}
+        isLoading={isLoading}
+      />
+      {error && (
+        <div className="text-red-500 mt-4">{error}</div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+        {images.map((image) => (
+          <div key={image.id} className="rounded-lg overflow-hidden shadow-lg">
+            {image.url ? (
+              <img
+                src={image.url}
+                alt={image.prompt}
+                className="w-full h-64 object-cover"
               />
+            ) : (
+              <div className="w-full h-64 bg-gray-200 animate-pulse flex items-center justify-center">
+                <p className="text-gray-500">Generating...</p>
+              </div>
+            )}
+            <div className="p-4">
+              <p className="text-sm text-gray-600">{image.prompt}</p>
             </div>
-
-            {error && (
-              <div className="text-red-500 mt-4">
-                {error}
-              </div>
-            )}
-
-            {images.length > 0 && (
-              <div className="mt-8 grid grid-cols-2 gap-6">
-                {images.map((image) => (
-                  <div key={image.id} className="relative space-y-2">
-                    <img 
-                      src={image.url} 
-                      alt={image.prompt}
-                      className="w-full h-auto rounded-lg shadow-md"
-                    />
-                    <div className="flex justify-between items-center p-2">
-                      <ImageRating
-                        imageId={image.id}
-                        currentRating={image.rating}
-                        onRate={handleRateImage}
-                      />
-                      <span className="text-sm text-gray-500">
-                        Generated with {image.model}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -28,11 +28,10 @@ export const generateImages = async (
     // Return pending images with prediction ID
     return [{
       id: response.data.id,
-      url: '', // Will be populated via webhook
+      url: '',
       prompt: config.mainPrompt,
       model: selectedModel.name,
       createdAt: new Date(),
-      rating: null,
       status: 'pending'
     }];
   } catch (error) {
@@ -46,19 +45,4 @@ export const generateImages = async (
 export const checkPredictionStatus = async (predictionId: string): Promise<any> => {
   const response = await api.get(`/${predictionId}`);
   return response.data;
-};
-
-export const handleWebhookResponse = (webhookData: any): GeneratedImage[] => {
-  if (webhookData.status !== 'succeeded' || !webhookData.output) {
-    throw new Error('Invalid webhook data');
-  }
-
-  return webhookData.output.map((imageUrl: string, index: number) => ({
-    id: `${webhookData.id}_${index}`,
-    url: imageUrl,
-    prompt: webhookData.input.prompt,
-    model: webhookData.version,
-    createdAt: new Date(webhookData.completed_at),
-    status: 'completed'
-  }));
 }; 

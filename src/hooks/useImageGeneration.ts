@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { PromptConfig, GeneratedImage, AIModel } from '../types/types';
-import { generateImages, rateImage } from '../services/imageService';
+import { generateImages } from '../services/imageService';
 import { API_CONFIG } from '../config/api.config';
 
 export const useImageGeneration = () => {

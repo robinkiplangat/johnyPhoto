@@ -12,8 +12,8 @@ export interface GeneratedImage {
   url: string;
   prompt: string;
   model: string;
-  rating?: number;
   createdAt: Date;
+  status: 'pending' | 'completed' | 'failed';
 }
 
 export interface AIModel {
